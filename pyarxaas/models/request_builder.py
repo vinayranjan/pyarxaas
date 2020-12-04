@@ -13,6 +13,7 @@ class RequestBuilder:
         self._dataset = dataset
         self._privacy_models = []
         self._suppression_limit = None
+        self._attr_properties = []
 
     def add_privacy_model(self, privacy_model: PrivacyModel):
         self._privacy_models.append(privacy_model)
@@ -24,6 +25,11 @@ class RequestBuilder:
 
     def add_suppression_limit(self, suppression_limit):
         self._suppression_limit = suppression_limit
+        return self
+
+    def add_attr_properties(self, attr_properties):
+        print(attr_properties, "&&&&&&&&&&&&&&&&&&")
+        self._attr_properties = attr_properties
         return self
 
     def build_analyze_request(self):
@@ -46,6 +52,7 @@ class RequestBuilder:
             models.append(model._payload())
         data_dict["privacyModels"] = models
         data_dict["suppressionLimit"] = self._suppression_limit
+        data_dict["attrProperties"] = self._attr_properties
         return data_dict
 
     def _strip_hierarchies(self, data_dict) -> None:

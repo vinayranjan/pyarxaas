@@ -17,7 +17,7 @@ class ARXaaS:
         self._connector = connector(url, client=client)
         self._connector.test_connection()
 
-    def anonymize(self, dataset: Dataset, privacy_models,suppression_limit: float = None) -> AnonymizeResult:
+    def anonymize(self, dataset: Dataset, privacy_models,suppression_limit: float = None, attr_properties = []) -> AnonymizeResult:
         """
         Attempt to anonymize a dataset with provided privacy models
 
@@ -26,11 +26,12 @@ class ARXaaS:
         :param suppression_limit: suppression limit to be used in the anonymization
         :return: Dataset with anonymized data
         """
-        request_payload = self._anonymize_payload(dataset, privacy_models, suppression_limit)
+        request_payload = self._anonymize_payload(dataset, privacy_models, suppression_limit, attr_properties)
+        print(request_payload)
         response = self._anonymize(request_payload)
         return self._anonymize_result(response)
 
-    def _anonymize_payload(self, dataset, privacy_models, suppression_limit) -> Mapping:
+    def _anonymize_payload(self, dataset, privacy_models, suppression_limit, attr_properties) -> Mapping:
         """
         Creates a anonymize payload to be sent to the backend
 
@@ -39,10 +40,10 @@ class ARXaaS:
         :param suppression_limit: suppression limit to be used in the anonymization
         :return: Mapping payload
         """
-
         return RequestBuilder(dataset)\
             .add_privacy_models(privacy_models)\
             .add_suppression_limit(suppression_limit)\
+            .add_attr_properties(attr_properties)\
             .build_anonymize_request()
 
     def _anonymize(self, payload):
